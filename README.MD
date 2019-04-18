@@ -9,5 +9,4 @@ Both Adding and Removing an item have an average time cost of O(1).
 
 ## Scala
 There is built-in [Immutable Queue implementation support](https://www.scala-lang.org/api/2.12.0/scala/collection/immutable/Queue.html) in scala.
-The Scala implementation uses the same idea as the Java version above. or rather, the Java implementation borrowed the idea of Scala implementation.
-
+The Scala implementation uses the same idea as the Java version above, or rather, the Java implementation above borrowed the idea of Scala implementation.
