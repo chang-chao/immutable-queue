@@ -11,40 +11,37 @@ import java.util.NoSuchElementException;
  * the out stack runs dry, the queue is pivoted by replacing the out stack by the reverse of in
  * stack, and the in stack by an empty stack.
  *
- * @param <T> the type of elements held in this queue
+ * @param <E> the type of elements held in this queue
  */
-public class ImmutableQueueImpl<T> implements ImmutableQueue<T> {
-  private final ImmutableStack<T> in;
-  private final ImmutableStack<T> out;
+public class ImmutableQueueImpl<E> implements ImmutableQueue<E> {
+  private final ImmutableStack<E> in;
+  private final ImmutableStack<E> out;
 
-  private ImmutableQueueImpl(ImmutableStack<T> in, ImmutableStack<T> out) {
+  private ImmutableQueueImpl(ImmutableStack<E> in, ImmutableStack<E> out) {
     this.in = in;
     this.out = out;
   }
 
   @Override
-  public ImmutableQueue<T> enQueue(T t) {
-    ImmutableStack<T> inStack = this.in.push(t);
-    if (this.out.isEmpty()) {
-      // we should ensure out is not empty for non-empty queues
-      // otherwise, head will need to get the bottom of the stack
-      // which is an impossible operation for stack
-      return new ImmutableQueueImpl<>(ImmutableStackImpl.EMPTY(), reverse(inStack));
-
+  public ImmutableQueue<E> enQueue(E e) {
+    if (this.isEmpty()) {
+      //  adding the first element to out, to ensure the out is never empty for an non-empty queue
+      return new ImmutableQueueImpl<>(ImmutableStackImpl.EMPTY(), this.out.push(e));
     } else {
-      // out is not empty
-      return new ImmutableQueueImpl<>(inStack, this.out);
+      // for an non-empty queue, add the element to in
+      return new ImmutableQueueImpl<>(this.in.push(e), this.out);
     }
   }
 
   @Override
-  public ImmutableQueue<T> deQueue() throws NoSuchElementException {
+  public ImmutableQueue<E> deQueue() throws NoSuchElementException {
     // ensure this queue is not empty
     ensureNotEmpty();
     // when this queue is not empty, we can ensure the out is not empty
-    ImmutableStack<T> newOut = this.out.pop();
+    ImmutableStack<E> newOut = this.out.pop();
 
     if (!newOut.isEmpty()) {
+      // if out is not empty, we need not to pivot the stacks for the new stack
       return new ImmutableQueueImpl<>(in, newOut);
     }
 
@@ -69,7 +66,7 @@ public class ImmutableQueueImpl<T> implements ImmutableQueue<T> {
   }
 
   @Override
-  public T head() throws NoSuchElementException {
+  public E head() throws NoSuchElementException {
     // ensure this queue is not empty
     ensureNotEmpty();
     // when this queue is not empty, we can ensure that out is not empty
